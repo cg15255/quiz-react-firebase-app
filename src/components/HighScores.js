@@ -36,7 +36,7 @@ export default function HighScores() {
           <div id='highScoresList'>
             {scores.map(record => (
               <li key={record.key} className='high-score'>
-                {record.name} - {record.score}
+                {record.name} - {record.score.toFixed(0)}
               </li>
             ))}
           </div>

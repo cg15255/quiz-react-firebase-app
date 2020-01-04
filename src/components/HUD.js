@@ -10,7 +10,7 @@ export default function HUD({ score, questionNumber }) {
       </div>
       <div className='hud-item'>
         <p className='prefix'>Score</p>
-        <h1 className='hud-main-text'>{score}</h1>
+        <h1 className='hud-main-text'>{score.toFixed(0)}</h1>
       </div>
     </div>
   )

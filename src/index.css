@@ -1,5 +1,7 @@
 :root {
   font-size: 62.5%;
+  --brandColor: #8659f0;
+  /* --brandColor: #56a5eb; */
 }
 
 * {
@@ -23,7 +25,7 @@ h4 {
 
 h1 {
   font-size: 5.4rem;
-  color: #56a5eb;
+  color: var(--brandColor);
   margin-bottom: 5rem;
 }
 
@@ -58,16 +60,19 @@ h2 {
   padding: 1rem 0;
   width: 20rem;
   text-align: center;
-  border: 0.1rem solid #56a5eb;
+  border: 0.05rem solid var(--brandColor);
   margin-bottom: 1rem;
+  border-radius: 4px;
   text-decoration: none;
-  color: #56a5eb;
+  color: var(--brandColor);
   background-color: white;
 }
 
 .btn:hover {
   cursor: pointer;
-  box-shadow: 0 0.4rem 1.4rem 0 rgba(86, 185, 235, 0.5);
+  background: var(--brandColor);
+  color: white;
+  border: 0.05rem solid transparent;
   transform: translateY(-0.1rem);
   transition: transform 150ms;
 }
@@ -119,7 +124,7 @@ input::placeholder {
 
 .choice-prefix {
   padding: 1.5rem 2.5rem;
-  background-color: #56a5eb;
+  background-color: var(--brandColor);
   color: white;
 }
 
@@ -155,13 +160,13 @@ input::placeholder {
 #progressBar {
   width: 20rem;
   height: 4rem;
-  border: 0.3rem solid #56a5eb;
+  border: 0.3rem solid var(--brandColor);
   margin-top: 1.5rem;
 }
 
 #progressBarFull {
   height: 3.4rem;
-  background-color: #56a5eb;
+  background-color: var(--brandColor);
   width: 0%;
 }
 
@@ -169,7 +174,7 @@ input::placeholder {
 #loader {
   border: 1.6rem solid white;
   border-radius: 50%;
-  border-top: 1.6rem solid #56a5eb;
+  border-top: 1.6rem solid var(--brandColor);
   width: 12rem;
   height: 12rem;
   animation: spin 2s linear infinite;
@@ -195,4 +200,10 @@ input::placeholder {
 .high-score {
   font-size: 2.8rem;
   margin-bottom: 0.5rem;
+}
+
+/* CATEGORY CHOOSER */
+
+.container--categories .btn {
+  margin: 2rem;
 }

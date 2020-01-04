@@ -3,6 +3,13 @@ import Question from './Question'
 import { loadQuestions } from '../helpers/QuestionsHelper'
 import HUD from '../components/HUD'
 import SaveScoreForm from '../components/SaveScoreForm'
+import CategoryChooser from './CategoryChooser'
+
+// TODO: Add extra bonus in score for time
+// TODO: Add option for user to select the category
+// TODO: If user does not score in the top 10, do not allow them to save their high score
+// TODO: Add a Play again Button on the High Score page and clean up the styling on this page
+// TODO: Have different high score leaderboards for different quiz categories
 
 export default function Game({ history }) {
   const [questions, setQuestions] = useState([])
@@ -11,12 +18,27 @@ export default function Game({ history }) {
   const [score, setScore] = useState(0)
   const [questionNumber, setQuestionNumber] = useState(0)
   const [done, setDone] = useState(false)
+  const [categoryChoice, setCategoryChoice] = useState(null)
+  const [isRunning, setIsRunning] = useState(false)
+  const [elapsedTime, setElapsedTime] = useState(0)
 
   useEffect(() => {
-    loadQuestions()
+    // load the questions when the player chooses the category
+    loadQuestions(10, categoryChoice, 'medium', 'multiple')
       .then(setQuestions)
       .catch(console.error)
-  }, [])
+  }, [categoryChoice])
+
+  useEffect(() => {
+    let interval
+    if (isRunning) {
+      interval = setInterval(
+        () => setElapsedTime(prevElapsedTime => prevElapsedTime + 0.1),
+        100
+      )
+    }
+    return () => clearInterval(interval)
+  }, [isRunning, currentQuestion])
 
   const scoreSaved = () => {
     history.push('/')
@@ -24,9 +46,16 @@ export default function Game({ history }) {
 
   const changeQuestion = useCallback(
     (bonus = 0) => {
+      // get current elapsed time and calculate a score modifier
+      let scoreTimeModifier = 10 - elapsedTime
+      // don't let the score Modifier go less than 1
+      if (scoreTimeModifier < 1) scoreTimeModifier = 1
+      // reset the elapsed time to zero for the useTimer hook to retrigger and start again
+      setElapsedTime(0)
       if (questions.length === 0) {
         setDone(true)
-        return setScore(score + bonus)
+        setIsRunning(false)
+        return setScore(score + bonus * scoreTimeModifier)
       }
       // get a random index of a question
       const randomQuestionIndex = Math.floor(Math.random() * questions.length)
@@ -41,7 +70,7 @@ export default function Game({ history }) {
       setQuestions(remainingQuestions)
       setCurrentQuestion(currentQuestion)
       setLoading(false)
-      setScore(score + bonus)
+      setScore(score + bonus * scoreTimeModifier)
       setQuestionNumber(questionNumber + 1)
     },
     [
@@ -52,20 +81,30 @@ export default function Game({ history }) {
       setLoading,
       setCurrentQuestion,
       setQuestionNumber,
+      elapsedTime,
+      setElapsedTime,
+      setIsRunning,
     ]
   )
-
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
+    console.log('hey there')
     if (!currentQuestion && questions.length) {
       changeQuestion()
+      setIsRunning(true)
     }
-  }, [currentQuestion, questions, changeQuestion])
+  }, [currentQuestion, questions.length])
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   return (
     <>
-      {loading && !done && <div id='loader' />}
+      {loading && !done && categoryChoice && <div id='loader' />}
 
-      {!done && !loading && currentQuestion && (
+      {!categoryChoice && (
+        <CategoryChooser setChoice={choice => setCategoryChoice(choice)} />
+      )}
+
+      {!done && !loading && currentQuestion && categoryChoice && (
         <>
           <HUD questionNumber={questionNumber} score={score} />
           <Question
